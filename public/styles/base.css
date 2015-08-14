@@ -1,5 +1,7 @@
-body {
+html, body {
+  height: 100%;
   margin-bottom: 120px;
+  overflow: hidden;
 }
 
 a, a:active, a:hover, a:focus {
@@ -36,8 +38,8 @@ p {
 #sprig {
   height: 30px;
   position: relative;
-  left: -31px;
-  top: -26px;
+  left: -63px;
+  top: -35px;
 }
 
 .panel-group .panel {
@@ -52,8 +54,16 @@ p {
   border-radius: 0;
   background-color: #00e59a;
   color: #ffffff;
+  height: 60px;
 }
 
+.panel-heading:hover {
+  background-color: #33ffbc;
+}
+
+.panel-heading h1 {
+  margin-top: 8px;
+}
 .panel:active {
   text-decoration: none;
 }
@@ -111,7 +121,7 @@ p {
 }
 
 #info-btn:hover {
-  background-color: #9137e0;
+  background-color: #bc33ff;
 }
 
 #confirm-btn {
@@ -122,15 +132,83 @@ p {
 }
 
 #confirm-btn:hover {
-  background-color: #ce0043;
+  background-color: #ff3375;
 }
 
-.footer-links {
-  font-size: 14px;
+/*slideout*/
+
+#slideout {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  height: 100%
+  -webkit-transition-duration: 0.8s;
+  -moz-transition-duration: 0.8s;
+  -o-transition-duration: 0.8s;
+  transition-duration: 0.8s;
+}
+#slideout-inner {
+  position: absolute;
+  top: 0px;
+  right: -250px;
+  height: 100%;
+  width: 250px;
+  -webkit-transition-duration: 0.8s;
+  -moz-transition-duration: 0.8s;
+  -o-transition-duration: 0.8s;
+  transition-duration: 0.8s;
+}
+#slideout:hover {
+  right: 50%;
+}
+#slideout:hover #slideout_inner {
+  right: 0px;
+}
+
+.sidenav {
+  padding-top: 20px;
+  border-radius: 0px;
+  background-color: #262626;
+  position: absolute;
+  top: 0px;
+  height: 900px;
+  right: -900x;
+  width: 900px;
+  z-index:4;
+
+}
+
+.sidenav ul li a {
+  font-size: 16px;
+  margin-left: 10px;
   color: #00e59a;
-  display: block;
 }
 
-.footer-links:hover {
+.nav > li > a:hover, .nav > li > a:focus {
+  background-color: #262626;
+}
+.sidenav ul li a:hover, a:after {
+  background-color: #1c1c1c;
+  color: #33ffbc;
+}
+
+.btn-default {
+  display: block;
+  height: 60px;
+  width: 60px;
+  position: relative;
+  top: -30px;
+  right: 16px;
+}
+
+.btn-default:hover {
+  background-color: #ffffff;
+}
+
+.glyphicon {
+  font-size: 2em;
+}
+
+.glyphicon:hover {
   color: #33ffbc;
 }

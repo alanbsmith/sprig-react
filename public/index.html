@@ -10,19 +10,32 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div id="slideout">
+<a href="#" class='navbar-brand'></a>
+  <button class="btn btn-lg btn-default  icon-large glyphicon glyphicon-align-justify" type="button">
+
+          </button>
+  <div id="slideout-inner">
+    <div class="sidenav thumbnail">
+      <ul class='nav nav-sidebar'>
+      <li><a href="https://github.com/alanbsmith/sprig-react">View The Repo</a></li>
+      <li><a href="http://facebook.github.io/react/">Learn React</a></li>
+      <li><a href="https://twitter.com/_alanbsmith">I'm on Twitter!</a></li>
+      </ul>
+    </div>
+  </div>   
+  </div>
+</div>
   <div class='container'>
-    <h1 id="logo">Sprig <img id="sprig" src="./images/leaf.png">
+
+    <h1 id="logo">Sprig <img id="sprig" src="./images/leaf.png"/>
     </h1>
     <p class='text-muted'>really easy scheduling</p>
     <div id='content'>
     </div>
   </div>
-  <footer>
-    <div class='container'>
-      <a href="https://github.com/alanbsmith" target="_blank" class='footer-links'>some links</a>
-      <a href="#" class='footer-links'>more links</a>
-    </div>
-  </footer>
+
   <script type="text/jsx;harmony=true" src="./scripts/index.js"></script>
 </body>
 </html>
+
