@@ -128,7 +128,13 @@ p {
 }
 
 .thumbnail.times.active {
-  background-color: #262626;
+  color: #ffffff;
+  background-color: #00e59a;
+}
+
+.thumbnail.dates.active {
+  color: #ffffff;
+  background-color: #00e59a;
 }
 
 .times:hover {
@@ -234,4 +240,8 @@ p {
 
 .glyphicon:hover {
   color: #33ffbc;
+}
+
+.text-muted {
+  margin-bottom: unset;
 }
