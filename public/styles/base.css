@@ -42,6 +42,25 @@ p {
   top: -35px;
 }
 
+#btn-start {
+  background-color: #00e59a;
+  color: #ffffff;
+  border-radius: 0px;
+}
+
+#btn-start:hover {
+  background-color: #33ffbc; 
+}
+
+.example-appear {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.example-appear.example-appear-active {
+  opacity: 1;
+}
+
 .panel-group .panel {
   border-radius: 0px;
 }
@@ -106,6 +125,10 @@ p {
   border-radius: 0px;
   height: 60px;
   display: block;
+}
+
+.thumbnail.times.active {
+  background-color: #262626;
 }
 
 .times:hover {
