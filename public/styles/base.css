@@ -1,7 +1,6 @@
 html, body {
   height: 100%;
   margin-bottom: 120px;
-  overflow: hidden;
 }
 
 a, a:active, a:hover, a:focus {
@@ -94,6 +93,7 @@ p {
 .col-xs-1 {
   padding: 1px;
   width: 14.28%;
+  margin-bottom: -24px;
 }
 
 .col-xs-3 {
@@ -109,13 +109,33 @@ p {
   display: block;
 }
 
+.date {
+  margin-top: -10px;
+  margin-bottom: 2px;
+  color: #00e59a;
+}
+
+.active .date {
+  color: #ffffff;
+}
+
 .dates:hover {
   color: #00e59a;
   border-color: #00e59a;
 }
 
 .calendar-heading {
-  text-align: center
+  text-align: center;
+
+}
+
+#dates {
+  margin-bottom: 10px;
+}
+
+#availability {
+  margin-top: 90px;
+  margin-bottom: 10px;
 }
 
 .times {
@@ -137,9 +157,14 @@ p {
   background-color: #00e59a;
 }
 
+
 .times:hover {
   color: #00e59a;
   border-color: #00e59a;
+}
+
+.date-header{
+  margin-bottom: 0px;
 }
 
 #info-btn {
@@ -151,6 +176,17 @@ p {
 
 #info-btn:hover {
   background-color: #bc33ff;
+}
+
+#attendee-btn {
+  background-color: #ffb00d;
+  font-size: 18px;
+  color: #ffffff;
+  border-radius: 0px;
+}
+
+#attendee-btn:hover {
+  background-color: #ffca5b;
 }
 
 #confirm-btn {

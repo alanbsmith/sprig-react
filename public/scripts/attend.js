@@ -75,37 +75,51 @@ var PanelGroup = React.createClass({
   getInitialState: function() {
     return{ date: "__________",
             time: "__________",
-            info: { name: "",
-                    phone: "",
-                    email: ""
+            day: "",
+            month: "",
+            info: { title: "",
+                    description: "",
+                    location: ""
                   },
-            availableDates: [ {'displayDay':'SUN', 'day':'Sunday', 'date': ''},
-                              {'displayDay':'MON', 'day':'Monday', 'date': ''},
-                              {'displayDay':'TUE', 'day':'Tuesday', 'date': ''},
-                              {'displayDay':'WED', 'day':'Wednesday', 'date': ''},
-                              {'displayDay':'THR', 'day':'Thursday', 'date': ''},
-                              {'displayDay':'FRI', 'day':'Friday', 'date': ''},
-                              {'displayDay':'SAT', 'day':'Saturday', 'date': ''}
-                            ],
-            availableTimes: [ {'timeSlot':'8:00-9:00 AM', 'displayTime': '8-9 AM'},
-                              {'timeSlot':'9:00-10:00 AM', 'displayTime': '9-10 AM'},
-                              {'timeSlot':'10:00-11:00 AM', 'displayTime': '10-11 AM'},
-                              {'timeSlot':'11:00-12:00 NOON', 'displayTime': '11-12 PM'},
-                              {'timeSlot':'1:00-2:00 PM', 'displayTime': '1-2 PM'},
-                              {'timeSlot':'2:00-3:00 PM', 'displayTime': '2-3 PM'},
-                              {'timeSlot':'3:00-4:00 PM', 'displayTime': '3-4 PM'},
-                              {'timeSlot':'4:00-5:00 PM', 'displayTime': '4-5 PM'}
-                            ]
+            availableDates: this.getNextWeek(),
+            availableTimes: this.getTimes(),
           }
   },
+  getNextWeek: function() {
+    var startDate = new Date();
+    var dates = [];
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday' ]
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+    for(x = 0; x < 7; x++) {
+      var parsedDate = startDate.toDateString().split(' ');
+      dates.push({'displayDay': parsedDate[0].toUpperCase(), 'month': months[startDate.getMonth()],'day': days[startDate.getDay()], 'date': startDate.getDate()})
+      startDate.setDate(startDate.getDate() + 1)
+    }
+    return(dates)
+  },
+  getTimes: function() {
+    return([  {'timeSlot':'7:00 AM - 8:00 AM', 'displayTime': '7-8 AM'},
+              {'timeSlot':'8:00 AM - 9:00 AM', 'displayTime': '8-9 AM'},
+              {'timeSlot':'9:00 AM - 10:00 AM', 'displayTime': '9-10 AM'},
+              {'timeSlot':'10:00 AM - 11:00 AM', 'displayTime': '10-11 AM'},
+              {'timeSlot':'11:00 AM - 12:00 PM', 'displayTime': '11-12 PM'},
+              {'timeSlot':'12:00 PM - 1:00 PM', 'displayTime': '12-1 PM'},
+              {'timeSlot':'1:00 PM - 2:00 PM', 'displayTime': '1-2 PM'},
+              {'timeSlot':'2:00 PM - 3:00 PM', 'displayTime': '2-3 PM'},
+              {'timeSlot':'3:00 PM - 4:00 PM', 'displayTime': '3-4 PM'},
+              {'timeSlot':'4:00 PM - 5:00 PM', 'displayTime': '4-5 PM'},
+              {'timeSlot':'5:00 PM - 6:00 PM', 'displayTime': '5-6 PM'},
+              {'timeSlot':'6:00 PM - 7:00 PM', 'displayTime': '6-7 PM'}
+          ])
+  },
   handleDate: function(data) {
-    this.setState({date: data.date})
+    this.setState({date: data.date, day: data.day, month: data.month})
   },
   handleTime: function(data) {
     this.setState({time: data.time})
   },
   handleInfo: function(data) {
-    this.setState({ info: { name: data.name, phone: data.phone, email: data.email }})
+    this.setState({ info: { title: data.title, description: data.description, location: data.location }})
   },
   render: function() {
     if(this.props.display === true) {
@@ -114,7 +128,8 @@ var PanelGroup = React.createClass({
           <div className='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>
             <CalendarPanel availableDates={this.state.availableDates} availableTimes={this.state.availableTimes} onDateClick={this.handleDate} onTimeClick={this.handleTime}/>
             <InfoPanel onClick={this.handleInfo} />
-            <ConfirmPanel date={this.state.date} time={this.state.time} info={this.state.info} />
+            <InvitePanel />
+            <ConfirmPanel day={this.state.day} month={this.state.month} date={this.state.date} time={this.state.time} info={this.state.info}/>
           </div>
         </ReactCSSTransitionGroup>
     )} else {
@@ -128,7 +143,7 @@ var CalendarPanel = React.createClass({
     return{availableDate: '', isOpen: false}
   },
   handleDateClick: function(i) {
-    this.props.onDateClick({date: this.props.availableDates[i]['day']});
+    this.props.onDateClick({day: this.props.availableDates[i]['day'], date: this.props.availableDates[i]['date'], month: this.props.availableDates[i]['month']});
     this.setState({availableDate: i})
   },
   handleTimeClick: function(time) {
@@ -170,7 +185,7 @@ var AvailableDate = React.createClass({
       'active': this.props.isSelected
     })
     return(
-      <div key={this.props.key} className='col-xs-1'><div onClick={this.handleClick.bind(this, this.props.key)} className={classes}>{this.props.date['displayDay']}</div></div>
+      <div key={this.props.key} className='col-xs-1'><div onClick={this.handleClick.bind(this, this.props.key)} className={classes}><h5 className='date'>{this.props.date['date']}</h5>{this.props.date['displayDay']}</div></div>
     )
   }
 });
@@ -218,28 +233,50 @@ var TimeSlot = React.createClass({
 var InfoPanel = React.createClass({
   handleInfo: function(event) {
     event.preventDefault();
-    var name = React.findDOMNode(this.refs.name).value.trim();
-    var phone = React.findDOMNode(this.refs.phone).value.trim();
-    var email = React.findDOMNode(this.refs.email).value.trim();
-    this.props.onClick({name: name, phone: phone, email: email})
+    var title = React.findDOMNode(this.refs.title).value.trim();
+    var description = React.findDOMNode(this.refs.description).value.trim();
+    var location = React.findDOMNode(this.refs.location).value.trim();
+    this.props.onClick({title: title, description: description, location: location})
   },
 
   render: function() {
     return (
       <div className='panel panel-default'>
         <a id='info-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseTwo' aria-expanded='true' aria-controls='collapseOne'>
-          <div className='panel-heading' role='tab' id='calendar'>
-            <h1 className='panel-title'>Your Info</h1>
+          <div className='panel-heading' role='tab' id='info'>
+            <h1 className='panel-title'>Event Info</h1>
           </div>
         </a>
         <div id='collapseTwo' className='panel-collapse collapse' role='tabpanel' aria-labelledby='calendar'>
           <div className='panel-body'>
             <p className='text-muted'>Please add your info.</p>
             <div className='form-horizontal'>
-              <input id='name' className='form-control' ref='name' placeholder='Name'></input>
-              <input id='phone' className='form-control' ref='phone' placeholder='Phone number'></input>
-              <input id='email' className='form-control' ref='email' placeholder='Email address'></input>
+              <input id='title' className='form-control' ref='title' placeholder='Event title'></input>
+              <input id='description' className='form-control' ref='description' placeholder='Description'></input>
+              <input id='location' className='form-control' ref='location' placeholder='Location'></input>
               <button id='info-btn' className='btn btn-block' onClick={this.handleInfo}>Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+});
+var InvitePanel = React.createClass({
+  render: function() {
+    return (
+      <div className='panel panel-default'>
+        <a id='invite-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseThree' aria-expanded='true' aria-controls='collapseThree'>
+          <div className='panel-heading' role='tab' id='invite'>
+            <h1 className='panel-title'>Invite Attendees</h1>
+          </div>
+        </a>
+        <div id='collapseThree' className='panel-collapse collapse' role='tabpanel' aria-labelledby='calendar'>
+          <div className='panel-body'>
+            <p className='text-muted'>Add attendees.</p>
+            <div className='form-horizontal'>
+              <input id='title' className='form-control' ref='title' placeholder='Event title'></input>
+              <button id='#' className='btn btn-warning btn-block'>Next</button>
             </div>
           </div>
         </div>
@@ -249,22 +286,34 @@ var InfoPanel = React.createClass({
 });
 
 var ConfirmPanel = React.createClass({
+  sendData: function() {
+    $.ajax({
+      url: "http://127.0.0.1:3000/api/v1/events/new",
+      type: 'get',
+      data: {data:{title: this.props.info.title, description: this.props.info.description, location: this.props.info.location ,time: this.props.time.time}},
+      dataType: 'json',
+      success: function(data) {
+        console.log(data)
+      }
+    })
+  },
   render: function() {
     return (
       <div className='panel panel-default'>
-        <a id='info-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseThree' aria-expanded='true' aria-controls='collapseOne'>
+        <a id='info-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseFour' aria-expanded='true' aria-controls='collapseFour'>
           <div className='panel-heading' role='tab' id='calendar'>
             <h1 className='panel-title'>Confirmation</h1>
           </div>
         </a>
-        <div id='collapseThree' className='panel-collapse collapse' role='tabpanel' aria-labelledby='calendar'>
+        <div id='collapseFour' className='panel-collapse collapse' role='tabpanel' aria-labelledby='calendar'>
           <div className='panel-body' align='center'>
-            <h4>Thanks {this.props.info.name}!</h4>
-            <p className='text-muted'>We have you set for {this.props.date} at {this.props.time}</p>
+            <h4>Thanks!</h4>
+            <p className='text-muted'>We have you set for {this.props.day}, {this.props.month} {this.props.date} at {this.props.time}</p>
             <p className='text-muted'>Please confirm the info below is correct.</p>
-            <p>{"Phone: " + this.props.info.phone}</p>
-            <p>{"Email: " + this.props.info.email}</p>
-            <button id="confirm-btn" className="btn btn-block">Confirm?</button>
+            <h4>{this.props.info.title}</h4>
+            <p>{this.props.info.description}</p>
+            <p>{this.props.info.location}</p>
+            <button id="confirm-btn" onClick={this.sendData} className="btn btn-block">Confirm?</button>
           </div>
         </div>
       </div>
