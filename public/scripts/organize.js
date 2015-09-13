@@ -74,13 +74,13 @@ var StartButton = React.createClass({
 var PanelGroup = React.createClass({
   getInitialState: function() {
     return{ dates: this.getNextWeek(),
-            times: [],
             availableDates: [],
             info: { title: "",
                     description: "",
                     location: ""
                   },
-            attendee: '',            
+            attendee: '',
+            availableTimeObjects: []
           }
   },
   getNextWeek: function() {
@@ -128,7 +128,8 @@ var PanelGroup = React.createClass({
   handleTime: function(data) {
     for(i = 0; i < this.state.availableDates.length; i++) {
       if(this.state.availableDates[i].date === data.selectedDate.date) {
-        this.state.availableDates[i].availableTimes = data.availableTimesArray
+        this.state.availableDates[i].availableTimeSlots = data.availableTimeSlots
+        this.state.availableDates[i].availableTimes = data.availableTimes
       }
       this.setState({availableDates: this.state.availableDates})
     }
@@ -140,7 +141,6 @@ var PanelGroup = React.createClass({
     this.setState({attendee: data.attendee})
   },
   render: function() {
-    console.log('availableDates',this.state.availableDates)
     if(this.props.display === true) {
       return(
         <ReactCSSTransitionGroup transitionName="example" transitionAppear={true}>
@@ -170,23 +170,29 @@ var CalendarPanel = React.createClass({
   getInitialState: function() {
     return({ times: [], selectedDate: '', isOpen: false})
   },
-  handleDateClick: function(date, i) {
-    var chosenDate = this.props.dates[i];
-    this.setState({times: chosenDate.times})
+  handleDateClick: function(date) {
     this.props.onDateClick({
-                            day: chosenDate['day'],
-                            date: chosenDate['date'],
-                            month: chosenDate['month'],
-                            availableTimes: []
+                            displayDay: date.displayDay,
+                            day: date.day,
+                            date: date.date,
+                            month: date.month,
+                            availableTimeSlots: [],
+                            availableTimes: [],
                           });
-    this.setState({selectedDate: date})
-
+    this.setState({selectedDate: date, times: date.times})
   },
-  handleTimeClick: function(availableTimesArray) {
-    this.props.onTimeClick({availableTimesArray: availableTimesArray, selectedDate: this.state.selectedDate});
+  handleTimeClick: function(timeSlots) {
+    var availableTimes = [];
+    for(i = 0; i < this.state.times.length; i++){
+      if(timeSlots.indexOf(this.state.times[i].timeSlot) !== -1) {
+        availableTimes.push(this.state.times[i])
+      }
+    }
+    this.props.onTimeClick({availableTimeSlots: timeSlots, availableTimes: availableTimes, selectedDate: this.state.selectedDate});
 
   },
   render: function() {
+
     return (
       <div className='panel panel-default'>
         <a id='calendar-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>
@@ -197,11 +203,13 @@ var CalendarPanel = React.createClass({
         <div id='collapseOne' className='panel-collapse collapse in' role='tabpanel' aria-labelledby='calendar'>
           <div className='panel-body'>
             <h6 className='text-muted calendar-heading' id='dates'>DATES</h6>
+            <div className='row' id='date-row'>
             {this.props.dates.map(function(date, i) {
               return (
-                <AvailableDate date={date} onClick={this.handleDateClick.bind(this, date, i)} key={i} isSelected={this.state.selectedDate === date ? true : false }/>
+                <AvailableDate date={date} onClick={this.handleDateClick.bind(this, date)} key={i} isSelected={this.state.selectedDate === date ? true : false }/>
               );
             }, this)}
+            </div>
           <TimeSlots availableDates={this.props.availableDates} times={this.state.times} date={this.state.selectedDate} onClick={this.handleTimeClick}/>
           </div>
         </div>
@@ -236,18 +244,18 @@ var TimeSlots = React.createClass({
   selectedTimes: function(time) {
     for(i = 0; i < this.props.availableDates.length; i++) {
       if(this.props.availableDates[i].date === this.props.date.date) {
-        return this.props.availableDates[i].availableTimes
+        return this.props.availableDates[i].availableTimeSlots
       }
     }
   },
 
-  handleClick: function(timeSlot) {
-    var availableTimes = this.selectedTimes()
-    if(availableTimes.indexOf(timeSlot) !== -1) {
-      availableTimes.splice(availableTimes.indexOf(timeSlot), 1)
+  handleClick: function(time) {
+    var availableTimes = this.selectedTimes();
+      if(availableTimes.indexOf(time.timeSlot) !== -1) {
+        availableTimes.splice(availableTimes.indexOf(time.timeSlot), 1)
       } else {
-        availableTimes.push(timeSlot)
-    }
+        availableTimes.push(time.timeSlot)
+      }
     this.props.onClick(availableTimes)
   },
   render: function() {
@@ -256,7 +264,7 @@ var TimeSlots = React.createClass({
         <h6 className='text-muted calendar-heading' id='availability'>AVAILABILITY</h6>
         {this.props.times.map(function(time, i){
           return (
-            <AvailableTime time={time} onClick={this.handleClick.bind(this, time.timeSlot)} key={i} isSelected={(this.selectedTimes().indexOf(time.timeSlot) !== -1) ? true : false}/> //isSelected={(this.state.selectedTimes.indexOf(time.timeSlot) !== -1) ? true : false } 
+            <AvailableTime time={time} onClick={this.handleClick.bind(this, time)} key={i} isSelected={(this.selectedTimes().indexOf(time.timeSlot) !== -1) ? true : false}/>
           )
           
         }, this)}
@@ -300,7 +308,7 @@ var InfoPanel = React.createClass({
       <div className='panel panel-default'>
         <a id='info-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseTwo' aria-expanded='true' aria-controls='collapseOne'>
           <div className='panel-heading' role='tab' id='info'>
-            <h1 className='panel-title'>Event Info</h1>
+            <h1 className='panel-title'>Add Event Info</h1>
           </div>
         </a>
         <div id='collapseTwo' className='panel-collapse collapse' role='tabpanel' aria-labelledby='calendar'>
@@ -348,7 +356,7 @@ var InvitePanel = React.createClass({
 var ConfirmPanel = React.createClass({
   sendData: function() {
     $.ajax({
-      url: "http://127.0.0.1:3000/api/v1/events/new",
+      url: "http://localhost:3000/api/v1/events/new",
       type: 'get',
       data: {data:{title: this.props.info.title, description: this.props.info.description, location: this.props.info.location , availability: this.props.availableDates, attendee: this.props.attendee}},
       dataType: 'json',
@@ -362,18 +370,22 @@ var ConfirmPanel = React.createClass({
       <div className='panel panel-default'>
         <a id='info-panel' data-toggle='collapse' data-parent='#accordion' href='#collapseFour' aria-expanded='true' aria-controls='collapseFour'>
           <div className='panel-heading' role='tab' id='calendar'>
-            <h1 className='panel-title'>Confirmation</h1>
+            <h1 className='panel-title'>Confirm</h1>
           </div>
         </a>
         <div id='collapseFour' className='panel-collapse collapse' role='tabpanel' aria-labelledby='calendar'>
           <div className='panel-body' align='center'>
-            <h4>Thanks!</h4>
-            <p className='text-muted'></p>
-            <p className='text-muted'>Please confirm the info below is correct.</p>
+            <h2>Thanks!</h2>
+            <p className='small'>PLEASE CONFIRM THE INFO BELOW IS CORRECT</p>
             <div>
+            <h3>{this.props.info.title}</h3>
+            <p className='text-muted'>{this.props.info.description}</p>
+            <p className='text-muted'>{this.props.info.location}</p>
+            <p className='small'>WITH</p>
+            <p className='text-muted'>{this.props.attendee}</p>
               {this.props.availableDates.map(function(date, i){
-                if(date.availableTimes.length > 0) {
-                var times = date.availableTimes.map(function(time, i) {
+                if(date.availableTimeSlots.length > 0) {
+                var times = date.availableTimeSlots.map(function(time, i) {
                   return(
                     <p className='small text-muted available-times'>{time}, </p>
                     )
@@ -388,10 +400,6 @@ var ConfirmPanel = React.createClass({
                 return(false)
               }}, this)}
             </div>
-            <h4>{this.props.info.title}</h4>
-            <p>{this.props.info.description}</p>
-            <p>{this.props.info.location}</p>
-            <p>{this.props.attendee}</p>
             <button id="confirm-btn" onClick={this.sendData} className="btn btn-block">Confirm?</button>
           </div>
         </div>

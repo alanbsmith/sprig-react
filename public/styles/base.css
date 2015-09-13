@@ -129,12 +129,17 @@ p {
 
 }
 
+#date-row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 #dates {
   margin-bottom: 10px;
 }
 
 #availability {
-  margin-top: 90px;
+  margin-top: 20px;
   margin-bottom: 10px;
 }
 
@@ -191,6 +196,7 @@ p {
 
 #confirm-btn {
   background-color: #e5004b;
+  margin-top: 20px;
   font-size: 18px;
   color: #ffffff;
   border-radius: 0px;
@@ -239,8 +245,8 @@ p {
   height: 900px;
   right: -900x;
   width: 900px;
-  z-index:4;
-
+  z-index: 1;
+  border-color: #262626;
 }
 
 .sidenav ul li a {
@@ -264,6 +270,7 @@ p {
   position: relative;
   top: -30px;
   right: 16px;
+  z-index: 1;
 }
 
 .btn-default:hover {
@@ -280,4 +287,9 @@ p {
 
 .text-muted {
   margin-bottom: unset;
+}
+
+#map-link {
+  color: #00e59a;
+  font-size: 16px;
 }
